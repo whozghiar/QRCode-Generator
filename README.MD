@@ -36,3 +36,7 @@ Une fois enregistré, le QR Code s'affichera dans une boîte de message.
 * Le bouton "Générer" n'est actif que si l'URL entrée est valide.
 * Le QR Code est généré à l'aide du module `pyqrcode` et enregistré dans un fichier PNG à l'aide du module `png`.
 * La validation de l'URL est effectuée à l'aide de l'expression régulière dans le module `re`.
+
+## Auteur
+
+[Whozghiar]https://github.com/whozghiar
