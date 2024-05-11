@@ -2,9 +2,9 @@
 
 Ce programme permet de générer un QR Code à partir d'une URL.
 
-## Prérequis
+## Prérequis (Script Python .py)
 
-Avant de pouvoir utiliser ce programme, vous devez installer les modules suivants:
+Les modules suivants sont requis pour l'exécution du script Python :
 
 * tkinter
 * pyqrcode
@@ -22,7 +22,7 @@ pip install re
 
 ## Utilisation
 
-Pour utiliser ce programme :  
+Pour utiliser l'application :  
  * Téléchargez l'archive RAR.
  * Extraire le contenu de l'archive
  * Lancer "main.exe"
