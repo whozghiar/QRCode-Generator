@@ -1,0 +1,28 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --black: #0a0a0a;
+  --white: #f5f0e8;
+  --yellow: #ffe600;
+  --red: #ff2b2b;
+  --border: 3px solid #0a0a0a;
+  --shadow: 5px 5px 0px #0a0a0a;
+  --font: 'Space Mono', 'Courier New', monospace;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--white);
+  color: var(--black);
+  font-family: var(--font);
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
