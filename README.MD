@@ -1,16 +1,15 @@
 # QR Code Generator
 
-Générateur de QR code en ligne : entrez une URL valide, obtenez instantanément votre QR code et téléchargez-le au format PNG.
+Générateur de QR code en ligne — entrez une URL, obtenez instantanément votre QR code et téléchargez-le en PNG.
 
 ---
 
 ## Table des matières
 
 - [Guide utilisateur](#guide-utilisateur)
-  - [Démarrer l'application](#démarrer-lapplication)
-  - [Utiliser l'application](#utiliser-lapplication)
 - [Guide développeur](#guide-développeur)
-  - [Architecture](#architecture)
+  - [Prérequis et installation](#prérequis-et-installation)
+  - [Architecture du projet](#architecture-du-projet)
   - [Backend Flask](#backend-flask)
   - [Frontend VueJS](#frontend-vuejs)
   - [Validation des URL](#validation-des-url)
@@ -19,62 +18,36 @@ Générateur de QR code en ligne : entrez une URL valide, obtenez instantanémen
 
 ## Guide utilisateur
 
-### Démarrer l'application
+L'application est accessible via votre navigateur web. Aucune installation n'est requise de votre côté.
 
-> **Prérequis :** Python 3.x et Node.js doivent être installés.
+### 1. Page d'accueil
 
-**Étape 1 — Installer les dépendances Python (une seule fois) :**
-
-```bash
-cd backend
-pip install -r requirements.txt
-```
-
-**Étape 2 — Ouvrir deux terminaux :**
-
-| Terminal | Commande | Rôle |
-|---|---|---|
-| Terminal 1 | `cd backend && python app.py` | Démarre le serveur Flask (port 5000) |
-| Terminal 2 | `cd frontend && npm install && npm run dev` | Démarre l'interface web (port 5173) |
-
-**Étape 3 — Ouvrir le navigateur à l'adresse :**
-
-```
-http://localhost:5173
-```
-
----
-
-### Utiliser l'application
-
-#### 1. État initial
-
-Au chargement, le champ URL est vide et le bouton **▶ GÉNÉRER** est désactivé.
+À l'ouverture, un champ de saisie s'affiche. Le bouton **▶ GÉNÉRER** est grisé tant qu'aucune URL valide n'a été saisie.
 
 ![État initial de l'application](docs/screenshots/etat_initial.png)
 
 ---
 
-#### 2. Saisir une URL invalide
+### 2. Saisir une URL invalide
 
-Si l'URL saisie n'est pas reconnue comme valide (ex : `hello world`, texte sans domaine), le badge passe en rouge **✗ INVALIDE** et le bouton reste inaccessible.
+Si le texte saisi ne correspond pas à une URL reconnue, le badge passe en rouge **✗ INVALIDE** et le bouton reste inaccessible.
 
 ![URL invalide — bouton désactivé](docs/screenshots/url_invalide.png)
 
 ---
 
-#### 3. Saisir une URL valide
+### 3. Saisir une URL valide
 
-Dès qu'une URL valide est détectée (ex : `https://github.com/whozghiar/QRCode-Generator`), le badge passe en jaune **✓ VALIDE** et le bouton **▶ GÉNÉRER** s'active.
+Dès qu'une URL valide est saisie, le badge passe en jaune **✓ VALIDE** et le bouton **▶ GÉNÉRER** s'active.
 
 ![URL valide — bouton actif](docs/screenshots/url_valide.png)
 
 ---
 
-#### 4. Générer et télécharger le QR code
+### 4. Générer et télécharger le QR code
 
-Cliquez sur **▶ GÉNÉRER**. Le QR code apparaît en quelques instants.  
-Cliquez ensuite sur **↓ TÉLÉCHARGER (.PNG)** pour sauvegarder l'image sur votre ordinateur.
+Cliquez sur **▶ GÉNÉRER**. Le QR code apparaît en quelques instants.
+Cliquez ensuite sur **↓ TÉLÉCHARGER (.PNG)** pour sauvegarder l'image sur votre appareil.
 
 ![QR code généré avec bouton de téléchargement](docs/screenshots/qrcode_genere.png)
 
@@ -82,30 +55,62 @@ Cliquez ensuite sur **↓ TÉLÉCHARGER (.PNG)** pour sauvegarder l'image sur vo
 
 ## Guide développeur
 
-### Architecture
+### Prérequis et installation
+
+**Prérequis :** Python 3.x et Node.js installés sur la machine.
+
+**1. Installer les dépendances Python (une seule fois) :**
+
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+**2. Installer les dépendances Node.js (une seule fois) :**
+
+```bash
+cd frontend
+npm install
+```
+
+**3. Lancer les deux serveurs (deux terminaux distincts) :**
+
+| Terminal | Commande | Rôle |
+|---|---|---|
+| Terminal 1 | `cd backend && python app.py` | Serveur API Flask — port **5000** |
+| Terminal 2 | `cd frontend && npm run dev` | Interface web Vite — port **5173** |
+
+**4. Ouvrir l'application dans le navigateur :**
+
+```
+http://localhost:5173
+```
+
+---
+
+### Architecture du projet
 
 ```
 QRCode-Generator/
 │
-├── main.py                  # Application originale Tkinter (conservée)
-├── src/
-│   └── qrcode.ico           # Icône originale
+├── .gitignore
+├── README.MD
 │
 ├── backend/                 # Serveur API Python
-│   ├── app.py               # Application Flask
+│   ├── app.py               # Application Flask (endpoint unique)
 │   └── requirements.txt     # Dépendances Python
 │
 ├── frontend/                # Interface web VueJS
 │   ├── index.html           # Point d'entrée HTML
-│   ├── vite.config.js       # Configuration Vite (proxy API)
+│   ├── vite.config.js       # Configuration Vite (proxy /api → Flask)
 │   ├── package.json         # Dépendances Node.js
 │   └── src/
 │       ├── main.js          # Montage de l'application Vue
 │       ├── style.css        # Styles globaux (design brutaliste)
-│       └── App.vue          # Composant principal
+│       └── App.vue          # Composant principal (logique + template)
 │
 └── docs/
-    └── screenshots/         # Captures d'écran pour la documentation
+    └── screenshots/         # Captures d'écran de la documentation
 ```
 
 ---
@@ -120,9 +125,9 @@ Le backend expose un unique endpoint REST :
 |---|---|---|
 | `POST` | `/api/generate` | Génère un QR code à partir d'une URL |
 
-**Corps de la requête :**
+**Corps de la requête (JSON) :**
 ```json
-{ "url": "https://example.com" }
+{ "url": "https://github.com/whozghiar/QRCode-Generator" }
 ```
 
 **Réponses :**
@@ -134,14 +139,14 @@ Le backend expose un unique endpoint REST :
 { "error": "URL invalide" }
 ```
 
-**Dépendances :**
+**Dépendances Python :**
 
 | Paquet | Rôle |
 |---|---|
 | `flask` | Serveur web et routage |
-| `flask-cors` | Autorise les requêtes cross-origin du frontend |
-| `pyqrcode` | Génération du QR code (même librairie que `main.py`) |
-| `pypng` | Export du QR code en PNG |
+| `flask-cors` | Autorise les requêtes cross-origin du frontend (port 5173) |
+| `pyqrcode` | Génération du QR code en mémoire |
+| `pypng` | Encodage de l'image en PNG |
 
 ---
 
@@ -149,24 +154,24 @@ Le backend expose un unique endpoint REST :
 
 **Fichier :** `frontend/src/App.vue`
 
-Le composant unique gère l'intégralité de l'interface :
+Composant unique gérant l'intégralité de l'interface :
 
-| Référence Vue | Type | Rôle |
+| Réf. Vue | Type | Rôle |
 |---|---|---|
-| `url` | `ref` | Valeur du champ URL |
+| `url` | `ref` | Valeur saisie dans le champ URL |
 | `qrImage` | `ref` | Image base64 reçue du backend |
-| `loading` | `ref` | État de chargement pendant la requête |
-| `error` | `ref` | Message d'erreur à afficher |
+| `loading` | `ref` | État pendant l'appel API |
+| `error` | `ref` | Message d'erreur éventuel |
 | `isValid` | `computed` | `true` si l'URL passe la regex |
-| `statusLabel` | `computed` | Texte du badge (VALIDE / INVALIDE / EN ATTENTE) |
+| `statusLabel` | `computed` | Texte du badge de validation |
 
-Le proxy Vite (`vite.config.js`) redirige automatiquement tous les appels `/api/*` vers `http://localhost:5000`, évitant ainsi tout problème CORS en développement.
+Le proxy Vite (`vite.config.js`) redirige tous les appels `/api/*` vers `http://localhost:5000`, éliminant ainsi tout problème CORS en développement.
 
 ---
 
 ### Validation des URL
 
-La validation est effectuée **des deux côtés** (frontend et backend) avec la même expression régulière :
+La validation est effectuée **côté frontend** (réactivité immédiate) **et côté backend** (sécurité), avec la même expression régulière :
 
 ```
 ^(https?://)?(([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,})([/?#].*)?$
@@ -186,7 +191,7 @@ La validation est effectuée **des deux côtés** (frontend et backend) avec la 
 - `http://www.example.co.uk/page?q=test`
 
 **Exemples d'URL invalides :**
-- `hello world` (espace)
+- `hello world` (espace interdit)
 - `localhost` (pas de TLD)
 - `ftp://example.com` (protocole non HTTP)
 
@@ -194,5 +199,4 @@ La validation est effectuée **des deux côtés** (frontend et backend) avec la 
 
 ## Auteur
 
-[Whozghiar](https://github.com/whozghiar)
 [Whozghiar](https://github.com/whozghiar)
